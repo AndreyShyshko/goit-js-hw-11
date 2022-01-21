@@ -1,4 +1,6 @@
 import './css/styles.css';
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 import imageCardTpl from './templates/image-card.hbs';
 import ImagesApiService from './js/api-service';
 import LoadMoreBtn from './js/load-more-btn';
@@ -58,6 +60,15 @@ async function fetchQueryImages() {
 
 function renderImageCard(images) {
   refs.galleryContainer.insertAdjacentHTML('beforeend', imageCardTpl(images));
+  lightboxGallery.refresh();
+  const { height: cardHeight } = document
+    .querySelector('.gallery')
+    .firstElementChild.getBoundingClientRect();
+
+  window.scrollBy({
+    top: cardHeight * 2,
+    behavior: 'smooth',
+  });
 }
 
 function clearGalleryContainer() {
@@ -67,3 +78,10 @@ function clearGalleryContainer() {
 function errorQuery() {
   Notify.failure('Sorry, there are no images matching your search query. Please try again');
 }
+
+const lightboxOptions = {
+  captions: true,
+  captionDelay: 250,
+};
+
+const lightboxGallery = new SimpleLightbox('.gallery a', lightboxOptions);
