@@ -21,7 +21,7 @@ loadMoreBtn.refs.button.addEventListener('click', fetchQueryImages);
 
 let hitsLengthSum;
 
-async function onSearch(e) {
+function onSearch(e) {
   e.preventDefault();
 
   imagesApiService.query = e.currentTarget.elements.searchQuery.value;
@@ -36,8 +36,6 @@ async function onSearch(e) {
   fetchQueryImages();
   loadMoreBtn.show();
   hitsLengthSum = 0;
-  const { totalHits } = await imagesApiService.fetchImages();
-  Notify.success(`Hooray! We found ${totalHits} images.`);
 }
 
 async function fetchQueryImages() {
@@ -56,19 +54,27 @@ async function fetchQueryImages() {
   }
 
   renderImageCard(hits);
+
+  if (imagesApiService.page === 2) {
+    Notify.success(`Hooray! We found ${totalHits} images.`);
+  }
 }
 
 function renderImageCard(images) {
   refs.galleryContainer.insertAdjacentHTML('beforeend', imageCardTpl(images));
-  lightboxGallery.refresh();
-  const { height: cardHeight } = document
-    .querySelector('.gallery')
-    .firstElementChild.getBoundingClientRect();
 
-  window.scrollBy({
-    top: cardHeight * 2,
-    behavior: 'smooth',
-  });
+  lightboxGallery.refresh();
+
+  if (imagesApiService.page > 2) {
+    const { height: cardHeight } = document
+      .querySelector('.gallery')
+      .firstElementChild.getBoundingClientRect();
+
+    window.scrollBy({
+      top: cardHeight * 2,
+      behavior: 'smooth',
+    });
+  }
 }
 
 function clearGalleryContainer() {
