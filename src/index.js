@@ -34,7 +34,7 @@ function onSearch(e) {
   imagesApiService.resetPage();
   clearGalleryContainer();
   fetchQueryImages();
-  loadMoreBtn.show();
+
   hitsLengthSum = 0;
 }
 
@@ -42,6 +42,7 @@ async function fetchQueryImages() {
   const { hits, totalHits } = await imagesApiService.fetchImages();
 
   if (hits.length === 0) {
+    loadMoreBtn.hide();
     return errorQuery();
   }
 
@@ -54,6 +55,8 @@ async function fetchQueryImages() {
   }
 
   renderImageCard(hits);
+
+  loadMoreBtn.show();
 
   if (imagesApiService.page === 2) {
     Notify.success(`Hooray! We found ${totalHits} images.`);
